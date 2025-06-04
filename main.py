@@ -50,22 +50,19 @@ def main():
         solution = args.algorithm.solve(puzzle, args.time_limit)
         if solution is not None:
             print(solution)
-            exit_code = 0
+            sys.exit(0)
         else:
-            print("INFEASIBLE")
-            exit_code = 1
-
+            rows = puzzle._array.tolist()
+            print("puzzle grid:")
+            for row in rows:
+                print(",".join(str(int(x)) for x in row))
+            sys.exit(0)
     except (TimeoutError, concurrent.futures.TimeoutError):
         print("TIMEOUT")
-        exit_code = 2
+        sys.exit(2)
     except Exception as e:
         print(f"Solver error: {e}")
-        exit_code = 1
-
-    rows = puzzle._array.tolist()
-    flat_rows = [",".join(str(int(x)) for x in row) for row in rows]
-    print("puzzle grid:\n" + "\n".join(flat_rows))
-    sys.exit(exit_code)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
