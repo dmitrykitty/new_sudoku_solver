@@ -24,7 +24,8 @@ class SudokuSolverType(StrEnum):
     def solve(self, puzzle: SudokuGrid, time_limit: float) -> SudokuGrid:
         match self:
             case SudokuSolverType.NAIVE:
-                return NaiveSudokuSolver.solve(puzzle, time_limit)
+                solver = NaiveSudokuSolver()
+                return solver.solve(puzzle, time_limit)
             case SudokuSolverType.FIRST_FAIL:
                 return FirstFailSudokuSolver.solve(puzzle, time_limit)
             case SudokuSolverType.DANCING_LINKS:
