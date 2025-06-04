@@ -46,30 +46,26 @@ def main():
     except Exception as e:
         print(f"Invalid puzzle format: {e}")
         sys.exit(1)
-    print(puzzle)
-    sys.exit(0)
+    try:
+        solution = args.algorithm.solve(puzzle, args.time_limit)
+        if solution is not None:
+            print(solution)
+            exit_code = 0
+        else:
+            print("INFEASIBLE")
+            exit_code = 1
 
-    # if solution is not None:
-    #         print(solution)
-    #         sys.exit(0)
-    #     else:
-    #         print("INFEASIBLE")
-    #         sys.exit(1)
-    # except (TimeoutError, concurrent.futures.TimeoutError):
-    #     print("TIMEOUT")
-    #     sys.exit(2)
-    # except Exception as e:
-    #     print(f"Solver error: {e}")
-    #     sys.exit(1)
-    #
-    # try:
-    #     rows = puzzle.to_2d_list()
-    # except AttributeError:
-    #     rows = puzzle.grid  # lub inne pole, w którym trzymasz siatkę
-    #
-    # flat_rows = [",".join(str(x) for x in row) for row in rows]
-    # print("puzzle grid:" + " ".join(flat_rows))
-    # sys.exit(0)
+    except (TimeoutError, concurrent.futures.TimeoutError):
+        print("TIMEOUT")
+        exit_code = 2
+    except Exception as e:
+        print(f"Solver error: {e}")
+        exit_code = 1
+
+    rows = puzzle._array.tolist()
+    flat_rows = [",".join(str(int(x)) for x in row) for row in rows]
+    print("puzzle grid:\n" + "\n".join(flat_rows))
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":
