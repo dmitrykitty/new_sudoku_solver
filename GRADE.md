@@ -5,9 +5,9 @@ I'm happy to announce that you've managed to get **14** out of 15 points for thi
 
 There still exist some issues that should be addressed before the deadline: **2025-06-04 08:00:00 CEST (+0200)**. For further details, please refer to the following list:
 
-<details><summary>[1p] Main accepts new argument &gt;&gt; `python -a naive -t 0.1 puzzles/sudokuN2num0.txt` produces incorrect standard output:</summary>-&nbsp;got:<br>puzzle&nbsp;grid:0,0,2,1&nbsp;0,2,0,0&nbsp;2,3,0,0&nbsp;4,0,0,0<br>-&nbsp;expected:<br>-------------<br>|&nbsp;3,4&nbsp;|&nbsp;2,1&nbsp;|<br>|&nbsp;1,2&nbsp;|&nbsp;4,3&nbsp;|<br>-------------<br>|&nbsp;2,3&nbsp;|&nbsp;1,4&nbsp;|<br>|&nbsp;4,1&nbsp;|&nbsp;3,2&nbsp;|<br>-------------</details>
+<details><summary>[1p] Main accepts new argument &gt;&gt; `python -a naive -t 0.1 puzzles/sudokuN2num0.txt` produces incorrect standard output:</summary>-&nbsp;got:<br>-------------<br>|&nbsp;0,0&nbsp;|&nbsp;2,1&nbsp;|<br>|&nbsp;0,2&nbsp;|&nbsp;0,0&nbsp;|<br>-------------<br>|&nbsp;2,3&nbsp;|&nbsp;0,0&nbsp;|<br>|&nbsp;4,0&nbsp;|&nbsp;0,0&nbsp;|<br>-------------<br>-&nbsp;expected:<br>-------------<br>|&nbsp;3,4&nbsp;|&nbsp;2,1&nbsp;|<br>|&nbsp;1,2&nbsp;|&nbsp;4,3&nbsp;|<br>-------------<br>|&nbsp;2,3&nbsp;|&nbsp;1,4&nbsp;|<br>|&nbsp;4,1&nbsp;|&nbsp;3,2&nbsp;|<br>-------------</details>
 
 -----------
 I remain your faithful servant\
 _Bobot_\
-_June 04, AD 2025, 01:21:31 (UTC)_
+_June 04, AD 2025, 01:24:46 (UTC)_
