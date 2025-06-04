@@ -35,7 +35,19 @@ class DancingLinksSudokuSolver(SudokuSolver):
         # - if it is, terminate it:
         #   https://docs.python.org/3/library/multiprocessing.html#multiprocessing.Process.terminate
         # - raise the TimeoutError
-        raise NotImplementedError("not implemented — remove this line")
+        queue: Queue = Queue()
+        proc = Process(target=self._communicate_with_external_solver, args=(queue,))
+        proc.start()
+        try:
+            result = queue.get(timeout=self._time_limit)
+        except Exception:
+            if proc.is_alive():
+                proc.terminate()
+            raise TimeoutError
+        finally:
+            proc.join()
+
+        return result
 
     def _communicate_with_external_solver(self, queue: Queue) -> None:
         """
@@ -52,7 +64,11 @@ class DancingLinksSudokuSolver(SudokuSolver):
         # 2. return its result via queue:
         # - https://docs.python.org/3/library/queue.html#queue.Queue.put_nowait
         # 3. if there is an exception, return `None` via the queue
-        raise NotImplementedError("not implemented — remove this line")
+        try:
+            res = self._run_algorithm()
+            queue.put_nowait(res)
+        except Exception:
+            queue.put_nowait(None)
 
     def _get_lib(self) -> CDLL:
         """
@@ -116,7 +132,13 @@ class DancingLinksSudokuSolver(SudokuSolver):
         #   https://docs.python.org/3/library/ctypes.html#arrays
         # - create also an array full of `0`s
         # Return them
-        raise NotImplementedError("not implemented — remove this line")
+        size = c_int(self._puzzle.size)
+
+        flat = [int(v) for v in self._puzzle.flatten()]
+        ArrayType = c_int * len(flat)
+        puzzle_array = ArrayType(*flat)
+        solution_array = ArrayType(*([0] * len(flat)))
+        return puzzle_array, size, solution_array
 
     def _grid_from_array(self, solution: Array[c_int]) -> SudokuGrid:
         """
@@ -140,7 +162,9 @@ class DancingLinksSudokuSolver(SudokuSolver):
         # - reshape the new array to correct shape!
         #   * https://numpy.org/doc/stable/reference/generated/numpy.reshape.html
         # Return a new SudokuGrid with the hiven array
-        raise NotImplementedError("not implemented — remove this line")
+        arr = np.array(list(solution), dtype=np.uint)
+        arr = arr.reshape((self._puzzle.size, self._puzzle.size))
+        return SudokuGrid(arr)
 
     def _run_algorithm(self) -> SudokuGrid | None:
         """
