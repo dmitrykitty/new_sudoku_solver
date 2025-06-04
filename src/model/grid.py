@@ -120,8 +120,9 @@ class SudokuGrid:
         size = rows
         block_size = math.isqrt(size)
         if block_size * block_size != size:
-            raise ValueError("Grid size must be a perfect square (blocks of equal size)")
-
+            raise ValueError(
+                "Grid size must be a perfect square (blocks of equal size)"
+            )
 
     @property
     def size(self) -> int:
@@ -226,7 +227,6 @@ class SudokuGrid:
         block_col = cell_column // bs
         return block_row * bs + block_col
 
-
     def block(self, block_index: int) -> npt.NDArray[np.uint]:
         """
         Returns a single block with a given index.
@@ -252,8 +252,7 @@ class SudokuGrid:
         block_col = block_index % blocks_per_row
         row_start = block_row * bs
         col_start = block_col * bs
-        return self._array[row_start:row_start + bs, col_start:col_start + bs]
-
+        return self._array[row_start : row_start + bs, col_start : col_start + bs]
 
     def copy(self) -> SudokuGrid:
         """
@@ -307,7 +306,7 @@ class SudokuGrid:
             blocks_str = []
             for b in range(bs):
                 start = b * bs
-                block_vals = row_vals[start:start + bs]
+                block_vals = row_vals[start : start + bs]
                 # Formatowanie każdej liczby na stałą szerokość
                 formatted = [format(int(val), f">{width}") for val in block_vals]
                 blocks_str.append(",".join(formatted))
@@ -326,7 +325,6 @@ class SudokuGrid:
             lines.append(format_row(row))
         lines.append(dashed)  # zakończenie wierszy
         return "\n".join(lines)
-
 
     @staticmethod
     def from_text(lines: list[str]) -> SudokuGrid:
@@ -395,4 +393,3 @@ class SudokuGrid:
         except Exception as e:
             raise ValueError("Could not create grid array") from e
         return SudokuGrid(arr)
-

@@ -1,4 +1,3 @@
-from src.solvers.solver import SudokuSolver
 from src.model.grid import SudokuGrid
 from src.utils.recursion_limit import recursion_limit_set_to  # noqa
 from timeit import default_timer as timer
@@ -211,4 +210,3 @@ class NaiveSudokuSolver:
                 self.solution[row, col] = 0
         # Jeśli żadna wartość nie działa, to puzzle jest niespełnialny na tej ścieżce
         return False
-

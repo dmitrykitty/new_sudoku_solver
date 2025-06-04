@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod #noqa
+from abc import ABC, abstractmethod  # noqa
 from src.model.grid import SudokuGrid
 from timeit import default_timer as timer
 
@@ -64,20 +64,21 @@ class SudokuSolver(ABC):
     #
     # tip. the method definition has to have something below, e.g. `pass`, `...`
     #      the docstring is also something :)
-    """
-    A method implementing the solving algorithm.
+    @abstractmethod
+    def run_algorithm(self) -> SudokuGrid | None:
+        """A method implementing the solving algorithm.
 
-    Return:
-    --------
-    solution: SudokuGrid | None:
-        - a sudoku solution if it has been found
-        - `None` if the solution has not been found
+        Return:
+        --------
+        solution: SudokuGrid | None:
+            - a sudoku solution if it has been found
+            - `None` if the solution has not been found
 
-    Raises:
-    -------
-    timeout_error: TimeoutError
-        when the available time runs out
-    """
+        Raises:
+        -------
+        timeout_error: TimeoutError
+            when the available time runs out
+        """
 
     @classmethod
     def solve(
@@ -117,4 +118,5 @@ class SudokuSolver(ABC):
         #     Therefore, pass forward also args and kwargs.
         #     Some explanation:https://www.geeksforgeeks.org/args-kwargs-python/
         # 2. return result of the `run_algorithm` method
-        raise NotImplementedError("not implemented — remove this line")
+        solver = cls(puzzle, time_limit, *args, **kwargs)
+        return solver.run_algorithm()

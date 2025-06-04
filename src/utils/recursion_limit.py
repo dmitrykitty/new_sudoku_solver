@@ -1,4 +1,4 @@
-import sys #noqa
+import sys  # noqa
 
 
 class recursion_limit_set_to:

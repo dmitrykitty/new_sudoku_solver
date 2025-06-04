@@ -1,8 +1,8 @@
 from ctypes import CDLL, c_int, Array
-from multiprocessing import Queue, Process #noqa
+from multiprocessing import Queue, Process  # noqa
 from pathlib import Path
 
-import numpy as np #noqa§
+import numpy as np  # noqa§
 from src.solvers.solver import SudokuSolver
 from src.model.grid import SudokuGrid
 
@@ -106,7 +106,7 @@ class DancingLinksSudokuSolver(SudokuSolver):
             a flat array of the same same as puzzle_array, but containing only zeros
         """
 
-       # TODO:
+        # TODO:
         # Implement the method:
         # - convert self._puzzle.size to `c_int`
         #   https://docs.python.org/3/library/ctypes.html#fundamental-data-types

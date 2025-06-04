@@ -5,7 +5,6 @@ from src.solvers.solver import SudokuSolver
 from src.model.grid import SudokuGrid
 from src.utils.recursion_limit import recursion_limit_set_to  # noqa
 
-
 Variable = NewType("Variable", tuple[int, int, int])
 """Type representing a single variable identifier, it's a tuple with
    the variable's coordinates (row index, col index, block index)"""
@@ -63,7 +62,11 @@ class State:
         # tip 1. read Variable type documentation
         # tip 2. use self.row_domains, self.col_domains, self.block_domains
         # tip 3. docs: https://docs.python.org/3.13/library/stdtypes.html#set.intersection
-        raise NotImplementedError("not implemented — remove this line")
+        row, col, block = variable
+
+        return Domain(
+            self.row_domains[row] & self.col_domains[col] & self.block_domains[block]
+        )
 
     def assign(self, variable: Variable, value: int) -> None:
         """
@@ -84,7 +87,15 @@ class State:
         #   - self.row_domains
         #   - self.col_domains
         #   - self.block_domains
-        raise NotImplementedError("not implemented — remove this line")
+        row, col, block = variable
+        # assign value in the grid
+        self.grid[row, col] = value
+        # variable is no longer free
+        self.free_variables.discard(variable)
+
+        self.row_domains[row].discard(value)
+        self.col_domains[col].discard(value)
+        self.block_domains[block].discard(value)
 
     def remove_assignment(self, variable: Variable) -> None:
         """
@@ -105,7 +116,17 @@ class State:
         #   - self.block_domains
         #
         # tip 2. grid contains the current value
-        raise NotImplementedError("not implemented — remove this line")
+        row, col, block = variable
+        # current value stored in the grid
+        value = int(self.grid[row, col])
+        # remove value from grid
+        self.grid[row, col] = 0
+        # mark variable as free again
+        self.free_variables.add(variable)
+        # restore domains
+        self.row_domains[row].add(value)
+        self.col_domains[col].add(value)
+        self.block_domains[block].add(value)
 
     @staticmethod
     def from_grid(grid: SudokuGrid) -> State:
@@ -128,7 +149,30 @@ class State:
         # tips.
         # - to enumerate over the grid use:
         #   `for (row, col), val in grid.enumerate():`
-        raise NotImplementedError("not implemented — remove this line")
+        size = grid.size
+        copy_grid = grid.copy()
+        all_values = set(range(1, size + 1))
+        row_domains = [set(all_values) for _ in range(size)]
+        col_domains = [set(all_values) for _ in range(size)]
+        block_domains = [set(all_values) for _ in range(size)]
+
+        free_vars: set[Variable] = set()
+        for (row, col), val in copy_grid.enumerate():
+            block = copy_grid.block_index(row, col)
+            if int(val) == 0:
+                free_vars.add(Variable((row, col, block)))
+            else:
+                row_domains[row].discard(int(val))
+                col_domains[col].discard(int(val))
+                block_domains[block].discard(int(val))
+
+        return State(
+            copy_grid,
+            free_vars,
+            [Domain(d) for d in row_domains],
+            [Domain(d) for d in col_domains],
+            [Domain(d) for d in block_domains],
+        )
 
 
 class FirstFailSudokuSolver(SudokuSolver):
@@ -171,7 +215,22 @@ class FirstFailSudokuSolver(SudokuSolver):
         #   - use self.state.assign to assign a value
         #   - use self.state.remove_assignment to revert the assignment
         # 4. return `False` if the solution has not been found
-        raise NotImplementedError("not implemented — remove this line")
+        var_dom = self._choose_variable()
+        # if there is no variable left, puzzle solved
+        if var_dom is None:
+            return True
+
+        if self._timeout():
+            raise TimeoutError
+
+        variable, domain = var_dom
+        for value in domain:
+            self.state.assign(variable, value)
+            if self._dfs():
+                return True
+            self.state.remove_assignment(variable)
+
+        return False
 
     def _choose_variable(self) -> tuple[Variable, Domain] | None:
         """
@@ -189,4 +248,11 @@ class FirstFailSudokuSolver(SudokuSolver):
         # - self.state.free_variables
         # - self.state.domain
         # - https://docs.python.org/3/library/functions.html#min
-        raise NotImplementedError("not implemented — remove this line")
+        if not self.state.free_variables:
+            return None
+
+        def dom_size(var: Variable) -> int:
+            return len(self.state.domain(var))
+
+        variable = min(self.state.free_variables, key=dom_size)
+        return variable, self.state.domain(variable)

@@ -2,7 +2,7 @@ import argparse
 import sys
 from src.model.grid import SudokuGrid
 import concurrent.futures
-from src.solvers.naive_solver import NaiveSudokuSolver
+from src.solvers.solver_type import SudokuSolverType
 
 
 def parse_args():
@@ -13,10 +13,19 @@ def parse_args():
         "puzzle_path", help="Path to the file containing a sudoku puzzle"
     )
     parser.add_argument(
+        "--algorithm",
+        "-a",
+        dest="algorithm",
+        type=SudokuSolverType,
+        choices=list(SudokuSolverType),
+        default=SudokuSolverType.NAIVE,
+        help="algorithm used to solver the sudoku",
+    )
+    parser.add_argument(
         "-t",
         "--time-limit",
         type=float,
-        default=None,
+        default=60.0,
         help="Time limit for the solver (in seconds)",
     )
     return parser.parse_args()
@@ -34,8 +43,7 @@ def main():
 
     try:
         puzzle = SudokuGrid.from_text(puzzle_data.strip().splitlines())
-        solver = NaiveSudokuSolver()
-        solution = solver.solve(puzzle, args.time_limit)
+        solution = args.algorithm.solve(puzzle, args.time_limit)
 
         if solution is not None:
             print(solution)
