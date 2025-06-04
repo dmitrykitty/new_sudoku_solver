@@ -34,7 +34,6 @@ def parse_args():
 def main():
     args = parse_args()
 
-    # 1) Wczytanie planszy z pliku
     try:
         with open(args.puzzle_path, "r") as f:
             puzzle_data = f.read()
@@ -47,21 +46,7 @@ def main():
     except Exception as e:
         print(f"Invalid puzzle format: {e}")
         sys.exit(1)
-
-    # ←————————————————————————————————————————————————————————————————————
-    # Poniżej korzystamy z puzzle._array, a nie z nieistniejącej metody to_2d_list()
-    #
-    # Zamieniamy numpy‐ową tablicę na „zagnieżdżone listy” za pomocą .tolist()
-    #
-    try:
-        rows = puzzle._array.tolist()  # <-- TUTAJ zmiana zamiast puzzle.to_2d_list()
-    except Exception:
-        # (w praktyce nigdy nie powinno się zdarzyć, bo _array istnieje zawsze)
-        print("Internal error: cannot access puzzle._array")
-        sys.exit(1)
-
-    flat_rows = [",".join(str(x) for x in row) for row in rows]
-    print("puzzle grid:" + " ".join(flat_rows))
+    print(puzzle)
     sys.exit(0)
 
     # if solution is not None:
